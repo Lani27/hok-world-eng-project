@@ -4,7 +4,7 @@ Translates the KingLauncher (王者荣耀世界) desktop application UI from Chi
 
 ## Download
 
-Download **KingLauncher-EngPatch.exe** from the [Releases](../../releases) page. No Node.js or other software required.
+**[Download KingLauncher-EngPatch.exe](https://github.com/Lani27/hok-world-eng-project/releases/latest)** from the Releases page. No Node.js or other software required.
 
 ## Install
 

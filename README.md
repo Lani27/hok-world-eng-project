@@ -1,5 +1,7 @@
 # Honor of Kings: World - English Patch
 
+[![Latest Release](https://img.shields.io/github/v/release/Lani27/hok-world-eng-project?label=Download&style=for-the-badge)](https://github.com/Lani27/hok-world-eng-project/releases/latest)
+
 Community English translation patches for Honor of Kings: World (王者荣耀世界).
 
 ## Projects
@@ -8,7 +10,7 @@ Community English translation patches for Honor of Kings: World (王者荣耀世
 Translates the KingLauncher desktop application UI from Chinese to English.
 - 1,600+ translated strings covering menus, settings, FAQ, and more
 - One-click standalone installer (.exe) - no dependencies required
-- [Download the latest release](../../releases)
+- **[Download the latest release](https://github.com/Lani27/hok-world-eng-project/releases/latest)**
 
 ### [Game Patch](game/) - Coming Soon
 English translation for the game client itself. Currently in development - the game has not yet launched.
@@ -22,7 +24,7 @@ Download the **Windows PC launcher** from https://world.qq.com/ (the one with th
 ## Quick Start
 
 ### For Users
-1. Download `KingLauncher-EngPatch.exe` from [Releases](../../releases)
+1. Download **KingLauncher-EngPatch.exe** from the **[Latest Release](https://github.com/Lani27/hok-world-eng-project/releases/latest)**
 2. Double-click to install (admin privileges required)
 3. Launch the game normally
 
