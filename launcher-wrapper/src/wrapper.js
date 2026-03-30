@@ -167,6 +167,63 @@ function isProcessRunning(pid) {
   } catch { return false; }
 }
 
+// ============ AUTO-COLLECT UNTRANSLATED ============
+const UNTRANSLATED_FILE = path.join(os.homedir(), 'eng_patch_untranslated.json');
+const collectedStrings = new Set();
+let lastWriteCount = 0;
+
+const COLLECT_SCRIPT = `(function(){
+  var zh=/[\\u4e00-\\u9fff\\u3400-\\u4dbf]/;
+  var results=[];
+  var tw=document.createTreeWalker(document.body||document.documentElement,NodeFilter.SHOW_TEXT,null,false);
+  var n;
+  while(n=tw.nextNode()){
+    var t=n.textContent.trim();
+    if(t && zh.test(t) && t.length>1 && t.length<300){
+      var zhCount=(t.match(/[\\u4e00-\\u9fff]/g)||[]).length;
+      if(zhCount/t.length>0.3) results.push(t);
+    }
+  }
+  document.querySelectorAll('[placeholder],[title],[alt]').forEach(function(el){
+    ['placeholder','title','alt'].forEach(function(a){
+      var v=el.getAttribute(a);
+      if(v && zh.test(v) && v.length>1) results.push(v);
+    });
+  });
+  return JSON.stringify([...new Set(results)]);
+})()`;
+
+async function collectUntranslated(port) {
+  let targets;
+  try {
+    targets = await httpGet(`http://127.0.0.1:${port}/json`);
+  } catch { return; }
+
+  for (const t of targets) {
+    if (t.type !== 'page' || !t.webSocketDebuggerUrl) continue;
+    try {
+      const result = await injectViaWebSocket(t.webSocketDebuggerUrl, COLLECT_SCRIPT);
+      if (result && result.value) {
+        const strs = JSON.parse(result.value);
+        strs.forEach(s => collectedStrings.add(s));
+      }
+    } catch {}
+  }
+
+  // Write to file if new strings found
+  if (collectedStrings.size > lastWriteCount) {
+    const sorted = [...collectedStrings].sort((a, b) => a.length - b.length);
+    const output = { count: sorted.length, updated: new Date().toISOString(), strings: sorted };
+    try {
+      fs.writeFileSync(UNTRANSLATED_FILE, JSON.stringify(output, null, 2), 'utf8');
+    } catch {}
+    if (collectedStrings.size > lastWriteCount + 5 || lastWriteCount === 0) {
+      log('Found ' + collectedStrings.size + ' Chinese strings in DOM -> ' + UNTRANSLATED_FILE);
+    }
+    lastWriteCount = collectedStrings.size;
+  }
+}
+
 // ============ UPDATE CHECK ============
 function checkForUpdate() {
   return new Promise(resolve => {
@@ -265,13 +322,19 @@ async function main() {
   const count = await injectAll(CDP_PORT, script, injected);
   log('Initial injection: ' + count + ' page(s) translated');
 
-  // Monitor for new pages and re-inject periodically
+  // Monitor for new pages, re-inject, and collect untranslated strings
   log('Monitoring for new pages... (close this window to stop)');
+  log('Untranslated Chinese will be logged to: ' + UNTRANSLATED_FILE);
   console.log('');
 
+  let collectTick = 0;
   const monitorInterval = setInterval(async () => {
     if (!isProcessRunning(child.pid)) {
       log('Launcher closed. Exiting.');
+      if (collectedStrings.size > 0) {
+        log('Total untranslated Chinese strings found: ' + collectedStrings.size);
+        log('Saved to: ' + UNTRANSLATED_FILE);
+      }
       clearInterval(monitorInterval);
       process.exit(0);
     }
@@ -290,6 +353,13 @@ async function main() {
         } catch {}
       }
     } catch {}
+
+    // Collect untranslated strings every ~10 seconds (5 ticks * 2s)
+    collectTick++;
+    if (collectTick >= 5) {
+      collectTick = 0;
+      await collectUntranslated(CDP_PORT);
+    }
   }, 2000);
 
   // Handle ctrl+c
