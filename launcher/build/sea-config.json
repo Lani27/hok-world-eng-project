@@ -1,0 +1,10 @@
+{
+  "main": "build/installer-bundle.js",
+  "output": "build/sea-prep.blob",
+  "disableExperimentalSEAWarning": true,
+  "useCodeCache": true,
+  "assets": {
+    "main.92fa614d.js": "patch_files/main.92fa614d.js",
+    "eng_patch_renderer.js": "patch_files/eng_patch_renderer.js"
+  }
+}

@@ -1,0 +1,22 @@
+# Build artifacts
+launcher/dist/
+launcher/build/sea-prep.blob
+launcher/build/installer-bundle.js
+launcher/new_strings.json
+
+# Game build artifacts (future)
+game/dist/
+
+# Node
+node_modules/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
