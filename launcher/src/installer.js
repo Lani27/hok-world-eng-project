@@ -9,7 +9,11 @@ const IS_SEA = (() => { try { return require('node:sea').isSea(); } catch { retu
 const EXE_PATH = process.execPath;
 const UNINSTALL_MODE = process.argv.includes('--uninstall');
 
-function log(msg) { console.log('  ' + msg); }
+const LOG_FILE = path.join(os.homedir(), 'eng_patch_install.log');
+function log(msg) {
+  console.log('  ' + msg);
+  try { fs.appendFileSync(LOG_FILE, msg + '\n'); } catch {}
+}
 function header(title) {
   console.log('');
   console.log('  ===================================================');
@@ -123,7 +127,8 @@ function killLauncher() {
 function getPatchFile(name) {
   if (IS_SEA) {
     const sea = require('node:sea');
-    return sea.getAsset(name);
+    // sea.getAsset() returns ArrayBuffer, convert to Buffer for fs.writeFileSync
+    return Buffer.from(sea.getAsset(name));
   }
   // Dev mode: read from patch_files/
   const p = path.join(__dirname, '..', 'patch_files', name);
@@ -155,8 +160,11 @@ function install() {
 
   // Extract
   log('Extracting app.asar... (this may take a moment)');
+  log('  Source: ' + asarPath);
+  log('  Temp: ' + tmpDir);
   if (fs.existsSync(tmpDir)) fs.rmSync(tmpDir, { recursive: true, force: true });
   asar.extract(asarPath, tmpDir);
+  log('  Extraction complete.');
 
   if (!fs.existsSync(path.join(tmpDir, 'package.json'))) {
     fatal('Failed to extract app.asar');
@@ -164,8 +172,11 @@ function install() {
 
   // Apply patch files
   log('Applying English patch...');
+  log('  Loading patch files...');
   const mainPatch = getPatchFile('main.92fa614d.js');
+  log('  main.92fa614d.js: ' + mainPatch.length + ' bytes');
   const rendererPatch = getPatchFile('eng_patch_renderer.js');
+  log('  eng_patch_renderer.js: ' + rendererPatch.length + ' bytes');
   fs.writeFileSync(path.join(tmpDir, 'main.92fa614d.js'), mainPatch);
   fs.writeFileSync(path.join(tmpDir, 'eng_patch_renderer.js'), rendererPatch);
 
@@ -245,8 +256,23 @@ function copyDirRecursive(src, dest) {
 }
 
 // Main
-if (UNINSTALL_MODE) {
-  uninstall();
-} else {
-  install();
+try { fs.writeFileSync(LOG_FILE, '=== English Patch Log ' + new Date().toISOString() + ' ===\n'); } catch {}
+try {
+  if (UNINSTALL_MODE) {
+    uninstall();
+  } else {
+    install();
+  }
+} catch (err) {
+  console.log('');
+  log('UNEXPECTED ERROR:');
+  log(err.message);
+  log(err.stack || '');
+  if (err.stack) {
+    console.log('');
+    console.log(err.stack);
+  }
+  console.log('');
+  pause();
+  process.exit(1);
 }
