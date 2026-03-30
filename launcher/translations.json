@@ -2066,5 +2066,15 @@
   "（1） 探索度累计为 1：咕呱蛋黄酥*1": "(1) Exploration 1: Guwa Egg Yolk Pastry x1",
   "（2） 探索度累计为 5：晶珀*20": "(2) Exploration 5: Crystal Amber x20",
   "（3） 探索度累计为 10：头像 软糯随行：孙膑*1": "(3) Exploration 10: Avatar - Soft Companion: Sun Bin x1",
-  "（4） 探索度累计为 20：面饰 湖影面纱·绿*1": "(4) Exploration 20: Face Accessory - Lake Shadow Veil (Green) x1"
+  "（4） 探索度累计为 20：面饰 湖影面纱·绿*1": "(4) Exploration 20: Face Accessory - Lake Shadow Veil (Green) x1",
+  "请选择探索队友": "Select Exploration Companion",
+  "每天仅限使用1次探索队员能力，请谨慎选择": "Team member abilities can only be used once per day. Choose carefully.",
+  "孙膑": "Sun Bin",
+  "鲁班大师": "Master Luban",
+  "东方曜": "Dongfang Yao",
+  "蒙犽": "Meng Ya",
+  "队员技能：": "Team Member Skill:",
+  "触发挑战事件时，成功概率从60%提升至100%": "When triggering a challenge, success rate increases from 60% to 100%",
+  "待解锁": "Locked",
+  "确认选择": "Confirm Selection"
 }
