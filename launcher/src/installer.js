@@ -1,13 +1,18 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const readline = require('readline');
 const { execSync } = require('child_process');
 const os = require('os');
 const asar = require('./asar');
 
+const VERSION = 'v1.0.0';
+const REPO = 'Lani27/hok-world-eng-project';
 const IS_SEA = (() => { try { return require('node:sea').isSea(); } catch { return false; } })();
 const EXE_PATH = process.execPath;
 const UNINSTALL_MODE = process.argv.includes('--uninstall');
+const SKIP_UPDATE = process.argv.includes('--skip-update');
 
 const LOG_FILE = path.join(os.homedir(), 'eng_patch_install.log');
 function log(msg) {
@@ -241,6 +246,88 @@ function uninstall() {
   pause();
 }
 
+// ============ UPDATE CHECK ============
+function compareVersions(current, latest) {
+  const parse = v => v.replace(/^v/, '').split('.').map(Number);
+  const c = parse(current);
+  const l = parse(latest);
+  for (let i = 0; i < 3; i++) {
+    if ((l[i] || 0) > (c[i] || 0)) return 1;
+    if ((l[i] || 0) < (c[i] || 0)) return -1;
+  }
+  return 0;
+}
+
+function fetchLatestRelease() {
+  return new Promise((resolve) => {
+    const opts = {
+      hostname: 'api.github.com',
+      path: `/repos/${REPO}/releases/latest`,
+      headers: { 'User-Agent': 'KingLauncher-EngPatch/' + VERSION },
+      timeout: 5000
+    };
+    const req = https.get(opts, res => {
+      let data = '';
+      res.on('data', d => data += d);
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); } catch { resolve(null); }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
+  });
+}
+
+function askUser(question) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const timer = setTimeout(() => { rl.close(); resolve('n'); }, 15000);
+    rl.question(question, answer => {
+      clearTimeout(timer);
+      rl.close();
+      resolve((answer || '').trim().toLowerCase());
+    });
+  });
+}
+
+async function checkForUpdate() {
+  if (SKIP_UPDATE) return;
+  log('Checking for updates... (current: ' + VERSION + ')');
+  const release = await fetchLatestRelease();
+  if (!release || !release.tag_name) {
+    log('  Could not check for updates (no internet?)');
+    return;
+  }
+  const latest = release.tag_name;
+  if (compareVersions(VERSION, latest) <= 0) {
+    log('  You have the latest version.');
+    return;
+  }
+  // Find the exe asset download URL
+  const asset = (release.assets || []).find(a => a.name.endsWith('.exe'));
+  const downloadUrl = asset
+    ? asset.browser_download_url
+    : `https://github.com/${REPO}/releases/tag/${latest}`;
+
+  console.log('');
+  log('=== UPDATE AVAILABLE ===');
+  log('  New version: ' + latest + ' (you have ' + VERSION + ')');
+  if (release.name) log('  ' + release.name);
+  console.log('');
+
+  const answer = await askUser('  Download the new version? (Y/N): ');
+  if (answer === 'y' || answer === 'yes') {
+    log('Opening download page...');
+    try { execSync(`start "" "${downloadUrl}"`, { stdio: 'ignore' }); } catch {}
+    log('Download started in your browser. Please run the new version after downloading.');
+    console.log('');
+    pause();
+    process.exit(0);
+  }
+  log('Continuing with current version...');
+  console.log('');
+}
+
 // Recursive directory copy
 function copyDirRecursive(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
@@ -256,23 +343,26 @@ function copyDirRecursive(src, dest) {
 }
 
 // Main
-try { fs.writeFileSync(LOG_FILE, '=== English Patch Log ' + new Date().toISOString() + ' ===\n'); } catch {}
-try {
-  if (UNINSTALL_MODE) {
-    uninstall();
-  } else {
-    install();
-  }
-} catch (err) {
-  console.log('');
-  log('UNEXPECTED ERROR:');
-  log(err.message);
-  log(err.stack || '');
-  if (err.stack) {
+(async () => {
+  try { fs.writeFileSync(LOG_FILE, '=== English Patch Log ' + new Date().toISOString() + ' ===\n'); } catch {}
+  try {
+    await checkForUpdate();
+    if (UNINSTALL_MODE) {
+      uninstall();
+    } else {
+      install();
+    }
+  } catch (err) {
     console.log('');
-    console.log(err.stack);
+    log('UNEXPECTED ERROR:');
+    log(err.message);
+    log(err.stack || '');
+    if (err.stack) {
+      console.log('');
+      console.log(err.stack);
+    }
+    console.log('');
+    pause();
+    process.exit(1);
   }
-  console.log('');
-  pause();
-  process.exit(1);
-}
+})();
