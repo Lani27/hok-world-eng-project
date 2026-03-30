@@ -1,9 +1,0 @@
-{
-  "main": "launcher-wrapper/src/wrapper.js",
-  "output": "launcher-wrapper/build/sea-prep.blob",
-  "disableExperimentalSEAWarning": true,
-  "useCodeCache": true,
-  "assets": {
-    "eng_patch_renderer.js": "launcher/patch_files/eng_patch_renderer.js"
-  }
-}
