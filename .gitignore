@@ -4,8 +4,23 @@ launcher/build/sea-prep.blob
 launcher/build/installer-bundle.js
 launcher/new_strings.json
 
-# Game build artifacts (future)
+# Game build artifacts
 game/dist/
+game/.venv/
+game/translations/shared_dictionary.json
+
+# Python
+__pycache__/
+game/pipeline/gemini_chunks_input/
+game/pipeline/gemini_chunks_output/
+game/pipeline/*.log
+game/pipeline/unified_*
+game/pipeline/translated_*
+game/pipeline/postprocessed_*
+game/pipeline/key_source_origins.json
+game/pipeline/untranslated_chinese_strings.json
+game/pipeline/~Eng_Patch_P/
+game/pipeline/*.pak
 
 # Node
 node_modules/
@@ -20,3 +35,7 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+dumped_scripts/
+
+# Excluded subprojects
+launcher-wrapper/

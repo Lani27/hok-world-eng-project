@@ -1,0 +1,7 @@
+cityhash
+opencc-python-reborn
+pyahocorasick
+httpx
+tqdm
+pandas
+openpyxl

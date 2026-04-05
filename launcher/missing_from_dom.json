@@ -1,0 +1,21 @@
+[
+  "你可",
+  "抖音",
+  "快手",
+  "小红书",
+  "鲲游众梦",
+  "关注企微",
+  "QQ频道",
+  "哔哩哔哩",
+  "游戏官网",
+  "网页已复制",
+  "游客OsT",
+  "移动云游戏",
+  "微信公众号",
+  "，或关闭窗口",
+  "('微信用户')",
+  "“王者荣耀世界”",
+  "请尝试以下步骤：\n1.检查设备的网络设置，确保已链接到正确的网络并输入了正确的密码。\n2.联系网络服务提供商或设备制造商寻求帮助。",
+  "// 特殊单独打点 不引入外部js\n        if (!window.htmlTime) {\n          window.htmlTime = {};\n        }\n        window.htmlTime.htmlInitTime = Date.now();",
+  "// @cunjin 下面的变量是给开发者工具用的，inline到html里面，一定不能删掉\n      var fordevtool = \"https://long.open.weixin.qq.com/connect/l/qrconnect?uuid=071HWHIK0RtQHa1w\"\n      // console.log('devtool use', fordevtool)"
+]

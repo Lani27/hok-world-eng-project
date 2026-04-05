@@ -1,0 +1,34 @@
+{
+  "game_name": "Honor of Kings: World",
+  "game_id": "hokw",
+  "ue_project_name": "PENDING_GAME_ANALYSIS",
+  "paks_dir": "PENDING_GAME_ANALYSIS",
+  "aes_key": "PENDING_GAME_ANALYSIS",
+  "pak_groups": {},
+  "locres_targets": [],
+  "formatstring_targets": [],
+  "patch_filename": "~Eng_Patch_P.pak",
+  "patch_folder": "~Eng_Patch_P",
+  "paths": {
+    "shared_dictionary": "./translations/shared_dictionary.json",
+    "game_dictionary": "./translations/hokw_dictionary.json",
+    "game_map": "./translations/hokw_map.json",
+    "glossary": "./translations/glossary.json"
+  },
+  "tools": {
+    "files_cli": "D:/Games/WOJD/EngPatch/PATCHER/files_cli/files_cli.exe",
+    "unreal_locres": "D:/Games/WOJD/EngPatch/PATCHER/UnrealLocres.exe",
+    "repak_cli": "D:/Games/WOJD/EngPatch/PATCHER/repak_cli-x86_64-pc-windows-msvc/repak.exe"
+  },
+  "gemini": {
+    "api_key": "",
+    "model": "gemini-3.1-flash-lite-preview",
+    "api_url": "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+    "requests_per_minute": 10,
+    "max_chunk_size_kb": 19,
+    "system_prompt": "You are a Game Translator for Honor of Kings: World, preparing for the Western release. Your job is to translate the following Chinese-to-English mapping data by inserting the English equivalent as the value in the quotes next to the Chinese key.\nFor example: \"苹果\": \"Apple\",\n\nInstructions:\n\n1.  The UI in the game is designed for condensed Chinese text; prioritize brevity and ensure the English translations are not verbose.\n2.  Maintain all original spacing, tabs, newlines, and formatting tokens/structures precisely. Ensure any formatting tags (like `<tag>` or `</>`) present in the original Chinese key are included exactly as they appear within the corresponding English value.\n3.  The output must be in valid JSON format and must include a translation for every single key-value pair provided in the input below, ensuring no lines are skipped or omitted.\n4.  Output the translated JSON data directly in a code block within the chat.\n5.  Perform the translation directly using the Chinese JSON data provided below within this prompt.",
+    "glossary_min_chinese_chars": 2,
+    "glossary_max_chinese_chars": 8,
+    "glossary_max_entries_per_chunk": 200
+  }
+}

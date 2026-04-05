@@ -1,0 +1,10 @@
+{
+  "_description": "Game-specific terminology control. Each entry maps a Chinese term to its canonical English translation and lists known AI mistranslations to watch for. Used by the Gemini translation client for consistency enforcement.",
+  "_format": {
+    "chinese_term": {
+      "en": "Canonical English translation",
+      "ai_mistakes": ["Known wrong translation 1", "Known wrong translation 2"],
+      "context": "Optional context note for translators"
+    }
+  }
+}
